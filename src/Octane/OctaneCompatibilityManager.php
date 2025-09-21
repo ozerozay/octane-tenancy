@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stancl\Tenancy\Octane;
 
 use Closure;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Application;
 use Laravel\Octane\RequestContext;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestTerminated;
@@ -56,7 +56,7 @@ class OctaneCompatibilityManager implements OperationTerminated
     /**
      * Required by OperationTerminated interface - Laravel application instance
      */
-    public function app(): mixed
+    public function app(): Application
     {
         return \app();
     }
