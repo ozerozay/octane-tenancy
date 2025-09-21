@@ -125,3 +125,75 @@ if (! function_exists('global_channel')) {
         Broadcast::channel('global__' . $channelName, $callback, $options);
     }
 }
+
+if (! function_exists('octane_active')) {
+    /**
+     * Check if Laravel Octane is currently active.
+     */
+    function octane_active(): bool
+    {
+        return isset($_SERVER['LARAVEL_OCTANE']) && $_SERVER['LARAVEL_OCTANE'] === '1';
+    }
+}
+
+if (! function_exists('octane_server')) {
+    /**
+     * Get the current Octane server type.
+     */
+    function octane_server(): ?string
+    {
+        return $_SERVER['OCTANE_SERVER'] ?? 
+               $_SERVER['LARAVEL_OCTANE_SERVER'] ?? 
+               config('octane.server') ?? 
+               null;
+    }
+}
+
+if (! function_exists('is_swoole')) {
+    /**
+     * Check if running on Swoole server.
+     */
+    function is_swoole(): bool
+    {
+        return octane_active() && octane_server() === 'swoole';
+    }
+}
+
+if (! function_exists('is_roadrunner')) {
+    /**
+     * Check if running on RoadRunner server.
+     */
+    function is_roadrunner(): bool
+    {
+        return octane_active() && octane_server() === 'roadrunner';
+    }
+}
+
+if (! function_exists('is_frankenphp')) {
+    /**
+     * Check if running on FrankenPHP server.
+     */
+    function is_frankenphp(): bool
+    {
+        return octane_active() && octane_server() === 'frankenphp';
+    }
+}
+
+if (! function_exists('octane_info')) {
+    /**
+     * Get comprehensive Octane information.
+     */
+    function octane_info(): array
+    {
+        return [
+            'active' => octane_active(),
+            'server' => octane_server(),
+            'is_swoole' => is_swoole(),
+            'is_roadrunner' => is_roadrunner(),
+            'is_frankenphp' => is_frankenphp(),
+            'workers' => $_SERVER['OCTANE_WORKERS'] ?? null,
+            'max_requests' => $_SERVER['OCTANE_MAX_REQUESTS'] ?? null,
+            'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? null,
+        ];
+    }
+}

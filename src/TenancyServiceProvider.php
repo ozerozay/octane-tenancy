@@ -135,6 +135,8 @@ class TenancyServiceProvider extends ServiceProvider
             Commands\ClearPendingTenants::class,
             Commands\CreatePendingTenants::class,
             Commands\CreateUserWithRLSPolicies::class,
+            Commands\OpcacheStatus::class,
+            Commands\OctaneStatus::class,
         ]);
 
         if (static::$migrateFreshOverride) {

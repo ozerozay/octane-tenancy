@@ -31,6 +31,8 @@ return [
         'force_gc' => env('OCTANE_TENANCY_FORCE_GC', true),
         'reset_static_properties' => env('OCTANE_TENANCY_RESET_STATICS', true),
         'flush_singletons' => env('OCTANE_TENANCY_FLUSH_SINGLETONS', true),
+        'opcache_reset' => env('OCTANE_TENANCY_OPCACHE_RESET', false),
+        'opcache_invalidate_tenant_files' => env('OCTANE_TENANCY_OPCACHE_INVALIDATE', true),
     ],
 
     /*
@@ -65,6 +67,8 @@ return [
         'log_cleanup_operations' => env('OCTANE_TENANCY_LOG_CLEANUP', false),
         'monitor_static_properties' => env('OCTANE_TENANCY_MONITOR_STATICS', false),
         'track_singleton_instances' => env('OCTANE_TENANCY_TRACK_SINGLETONS', false),
+        'monitor_opcache' => env('OCTANE_TENANCY_MONITOR_OPCACHE', false),
+        'opcache_hit_rate_threshold' => env('OCTANE_TENANCY_OPCACHE_HIT_RATE', 95.0),
     ],
 
     /*

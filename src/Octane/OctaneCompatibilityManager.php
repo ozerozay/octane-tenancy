@@ -79,6 +79,7 @@ class OctaneCompatibilityManager implements OperationTerminated
         $this->cleanEventListeners();
         $this->forceTenancyEnd();
         $this->cleanGlobalState();
+        $this->monitorOpcachePerformance();
     }
 
     /**
@@ -148,14 +149,202 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function cleanGlobalState(): void
     {
-        // Clear any tenant-related cached data
-        if (function_exists('opcache_reset')) {
-            opcache_reset();
-        }
+        // Handle OPcache cleanup based on environment
+        $this->handleOpcacheCleanup();
 
         // Force PHP garbage collection
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
+        }
+    }
+
+    /**
+     * Handle OPcache cleanup with environment-aware logic
+     */
+    protected function handleOpcacheCleanup(): void
+    {
+        if (!$this->isOpcacheEnabled()) {
+            return;
+        }
+
+        // Only reset OPcache in development or when explicitly enabled
+        $shouldReset = config('octane.memory_management.opcache_reset', false) 
+            || $this->isDevelopmentEnvironment();
+
+        if ($shouldReset && function_exists('opcache_reset')) {
+            opcache_reset();
+            
+            if (config('octane.debug.log_cleanup', false)) {
+                \Log::debug('OPcache reset performed', [
+                    'memory_before' => memory_get_usage(true),
+                    'opcache_stats' => $this->getOpcacheStats(),
+                ]);
+            }
+        }
+
+        // Always invalidate tenant-specific files if possible
+        $this->invalidateTenantSpecificOpcache();
+    }
+
+    /**
+     * Check if OPcache is enabled
+     */
+    public function isOpcacheEnabled(): bool
+    {
+        return function_exists('opcache_get_status') && opcache_get_status() !== false;
+    }
+
+    /**
+     * Get OPcache statistics for monitoring
+     */
+    public function getOpcacheStats(): array
+    {
+        if (!$this->isOpcacheEnabled()) {
+            return ['enabled' => false];
+        }
+
+        $status = opcache_get_status();
+        
+        return [
+            'enabled' => true,
+            'memory_usage' => $status['memory_usage'] ?? [],
+            'opcache_statistics' => $status['opcache_statistics'] ?? [],
+            'scripts_count' => $status['opcache_statistics']['num_cached_scripts'] ?? 0,
+            'hit_rate' => $this->calculateOpcacheHitRate($status),
+        ];
+    }
+
+    /**
+     * Calculate OPcache hit rate
+     */
+    protected function calculateOpcacheHitRate(array $status): float
+    {
+        $stats = $status['opcache_statistics'] ?? [];
+        $hits = $stats['hits'] ?? 0;
+        $misses = $stats['misses'] ?? 0;
+        $total = $hits + $misses;
+        
+        return $total > 0 ? round(($hits / $total) * 100, 2) : 0.0;
+    }
+
+    /**
+     * Check if we're in development environment
+     */
+    protected function isDevelopmentEnvironment(): bool
+    {
+        return \app()->environment(['local', 'development', 'testing']);
+    }
+
+    /**
+     * Invalidate tenant-specific OPcache entries
+     */
+    protected function invalidateTenantSpecificOpcache(): void
+    {
+        if (!function_exists('opcache_invalidate') || !$this->isOpcacheEnabled()) {
+            return;
+        }
+
+        // Get tenant-specific files that might need invalidation
+        $tenantFiles = $this->getTenantSpecificFiles();
+        
+        foreach ($tenantFiles as $file) {
+            if (file_exists($file)) {
+                opcache_invalidate($file, true);
+            }
+        }
+    }
+
+    /**
+     * Get list of tenant-specific files for OPcache invalidation
+     */
+    protected function getTenantSpecificFiles(): array
+    {
+        // Common tenant-specific files that might change
+        return [
+            base_path('config/tenancy.php'),
+            base_path('app/Providers/TenancyServiceProvider.php'),
+            // Add more tenant-specific files as needed
+        ];
+    }
+
+    /**
+     * Validate OPcache configuration for Octane
+     */
+    public static function validateOpcacheConfiguration(): array
+    {
+        $recommendations = [];
+        
+        if (!function_exists('opcache_get_configuration')) {
+            return ['OPcache not available'];
+        }
+
+        $config = opcache_get_configuration();
+        $directives = $config['directives'] ?? [];
+
+        // Check critical settings
+        if (!($directives['opcache.enable'] ?? false)) {
+            $recommendations[] = 'Enable OPcache: opcache.enable=1';
+        }
+
+        if (!($directives['opcache.enable_cli'] ?? false)) {
+            $recommendations[] = 'Enable OPcache for CLI: opcache.enable_cli=1';
+        }
+
+        $memoryConsumption = $directives['opcache.memory_consumption'] ?? 0;
+        if ($memoryConsumption < 128) {
+            $recommendations[] = 'Increase OPcache memory: opcache.memory_consumption=256';
+        }
+
+        $maxFiles = $directives['opcache.max_accelerated_files'] ?? 0;
+        if ($maxFiles < 4000) {
+            $recommendations[] = 'Increase max files: opcache.max_accelerated_files=10000';
+        }
+
+        // Production vs Development recommendations
+        $isProduction = !\app()->environment(['local', 'development', 'testing']);
+        
+        if ($isProduction && ($directives['opcache.validate_timestamps'] ?? true)) {
+            $recommendations[] = 'Production: Set opcache.validate_timestamps=0';
+        }
+
+        if (!$isProduction && !($directives['opcache.validate_timestamps'] ?? false)) {
+            $recommendations[] = 'Development: Set opcache.validate_timestamps=1';
+        }
+
+        return $recommendations;
+    }
+
+    /**
+     * Monitor OPcache performance and log warnings if needed
+     */
+    protected function monitorOpcachePerformance(): void
+    {
+        if (!config('octane.debug.monitor_opcache', false) || !$this->isOpcacheEnabled()) {
+            return;
+        }
+
+        $stats = $this->getOpcacheStats();
+        $hitRateThreshold = config('octane.debug.opcache_hit_rate_threshold', 95.0);
+
+        // Check hit rate
+        if ($stats['hit_rate'] < $hitRateThreshold) {
+            \Log::warning('OPcache hit rate below threshold', [
+                'hit_rate' => $stats['hit_rate'],
+                'threshold' => $hitRateThreshold,
+                'stats' => $stats,
+            ]);
+        }
+
+        // Check memory usage
+        if (isset($stats['memory_usage']['current_wasted_percentage'])) {
+            $wastedPercentage = $stats['memory_usage']['current_wasted_percentage'];
+            
+            if ($wastedPercentage > 10) { // More than 10% wasted
+                \Log::warning('OPcache memory waste detected', [
+                    'wasted_percentage' => $wastedPercentage,
+                    'memory_usage' => $stats['memory_usage'],
+                ]);
+            }
         }
     }
 

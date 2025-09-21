@@ -76,6 +76,12 @@ OCTANE_TENANCY_LOG_MEMORY=false
 OCTANE_TENANCY_LOG_CLEANUP=false
 OCTANE_TENANCY_MONITOR_STATICS=false
 
+# OPcache Integration
+OCTANE_TENANCY_OPCACHE_RESET=false
+OCTANE_TENANCY_OPCACHE_INVALIDATE=true
+OCTANE_TENANCY_MONITOR_OPCACHE=false
+OCTANE_TENANCY_OPCACHE_HIT_RATE=95.0
+
 # Cache Configuration
 OCTANE_TENANT_CACHE_DRIVER=redis
 OCTANE_CENTRAL_CACHE_DRIVER=redis
@@ -166,11 +172,139 @@ php artisan octane:start --watch
 php artisan octane:start --watch=app,config,database,resources,routes
 ```
 
+## 🔍 Octane Status Check
+
+### Verify Octane is Running
+
+```bash
+# Check if Octane is active and which server is running
+php artisan tenancy:octane-status
+
+# Show detailed server information
+php artisan tenancy:octane-status --detailed
+
+# Get raw status as JSON
+php artisan tenancy:octane-status --json
+```
+
+**Sample Output:**
+```
+✅ Laravel Octane is ACTIVE
+   Server: frankenphp
+
+✅ Octane Tenancy Compatibility Manager: LOADED
+✅ Memory Persistence: ACTIVE
+   Uptime: 2h 15m 30s
+```
+
+### Helper Functions
+
+Use these functions in your code to detect Octane:
+
+```php
+// Check if Octane is active
+if (octane_active()) {
+    echo "Running with Octane!";
+}
+
+// Get server type
+$server = octane_server(); // 'frankenphp', 'swoole', 'roadrunner', or null
+
+// Check specific servers
+if (is_frankenphp()) {
+    echo "FrankenPHP is powering this request!";
+}
+
+if (is_swoole()) {
+    echo "Swoole is active";
+}
+
+if (is_roadrunner()) {
+    echo "RoadRunner is running";
+}
+
+// Get comprehensive info
+$info = octane_info();
+/*
+[
+    'active' => true,
+    'server' => 'frankenphp',
+    'is_swoole' => false,
+    'is_roadrunner' => false,
+    'is_frankenphp' => true,
+    'workers' => '4',
+    'max_requests' => '500',
+    'server_software' => 'FrankenPHP/1.0.0'
+]
+*/
+```
+
+## 🚀 OPcache Optimization
+
+### Check OPcache Status
+
+```bash
+# Check if OPcache is enabled and configured properly
+php artisan tenancy:opcache-status
+
+# Show configuration recommendations
+php artisan tenancy:opcache-status --recommendations
+
+# Get raw statistics as JSON
+php artisan tenancy:opcache-status --json
+```
+
+### OPcache Configuration
+
+Add these to your `php.ini` for optimal performance:
+
+#### Production Settings
+```ini
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=256
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=10000
+opcache.validate_timestamps=0
+opcache.save_comments=0
+opcache.fast_shutdown=1
+opcache.max_wasted_percentage=10
+```
+
+#### Development Settings
+```ini
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=256
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=10000
+opcache.validate_timestamps=1
+opcache.revalidate_freq=2
+opcache.save_comments=1
+```
+
+### Environment Variables
+```bash
+# Enable OPcache monitoring (development)
+OCTANE_TENANCY_MONITOR_OPCACHE=true
+
+# Set hit rate threshold (default: 95%)
+OCTANE_TENANCY_OPCACHE_HIT_RATE=95.0
+
+# Enable OPcache reset in development
+OCTANE_TENANCY_OPCACHE_RESET=true
+```
+
 ## 📊 Performance Testing
 
 Run the included performance tests:
 
 ```bash
+# Check OPcache status first
+php artisan tenancy:opcache-status --recommendations
+
 # Run all tests
 composer octane-test
 
