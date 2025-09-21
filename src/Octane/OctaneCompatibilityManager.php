@@ -64,9 +64,9 @@ class OctaneCompatibilityManager implements OperationTerminated
     /**
      * Required by OperationTerminated interface - Sandbox instance (if applicable)
      */
-    public function sandbox(): mixed
+    public function sandbox(): Application
     {
-        return null; // Not applicable for our use case
+        return \app(); // Return the application instance since we don't use sandbox
     }
 
     /**
