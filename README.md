@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/ozerozay/octane-tenancy"><img width="800" src="/art/logo.png" alt="Octane Tenancy for Laravel logo" /></a>
+    <a href="https://github.com/ozerozay/octane-tenancy"><img width="800" src="/art/logo.png" alt="Tenancy for Laravel with Octane Support" /></a>
 </p>
 
 <p align="center">
@@ -12,7 +12,7 @@
     <a href="#"><img alt="RoadRunner" src="https://img.shields.io/badge/server-RoadRunner-purple.svg"></a>
 </p>
 
-<h1><a href="https://github.com/ozerozay/octane-tenancy">🚀 Octane Tenancy for Laravel &mdash; ozerozay/octane-tenancy</a></h1>
+<h1><a href="https://github.com/ozerozay/octane-tenancy">🚀 Tenancy for Laravel with Octane Support &mdash; ozerozay/octane-tenancy</a></h1>
 
 ### *🔥 Laravel Octane Compatible Multi-Tenancy with Maximum Performance*
 

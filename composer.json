@@ -1,6 +1,6 @@
 {
     "name": "ozerozay/octane-tenancy",
-    "description": "Laravel Octane compatible multi-tenancy for your Laravel application with full FrankenPHP, Swoole & RoadRunner support.",
+    "description": "Laravel Octane optimized multi-tenancy for Laravel applications - Fork of stancl/tenancy with performance enhancements.",
     "keywords": [
         "laravel",
         "laravel-octane",
@@ -25,7 +25,7 @@
         {
             "name": "Özer Özay",
             "email": "ozer@merkezim.tr",
-            "role": "Octane Implementation & Optimization"
+            "role": "Octane Optimization & Performance"
         }
     ],
     "require": {
@@ -51,7 +51,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OzerOzay\\OctaneTenancy\\": "src/"
+            "Stancl\\Tenancy\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -59,17 +59,17 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "OzerOzay\\OctaneTenancy\\Tests\\": "tests/"
+            "Stancl\\Tenancy\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "OzerOzay\\OctaneTenancy\\TenancyServiceProvider"
+                "Stancl\\Tenancy\\TenancyServiceProvider"
             ],
             "aliases": {
-                "Tenancy": "OzerOzay\\OctaneTenancy\\Facades\\Tenancy",
-                "GlobalCache": "OzerOzay\\OctaneTenancy\\Facades\\GlobalCache"
+                "Tenancy": "Stancl\\Tenancy\\Facades\\Tenancy",
+                "GlobalCache": "Stancl\\Tenancy\\Facades\\GlobalCache"
             }
         }
     },

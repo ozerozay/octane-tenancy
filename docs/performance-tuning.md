@@ -189,12 +189,12 @@ StaticPropertyManager::register(YourClass::class, function() {
 'octane' => [
     'singleton_lifecycle' => [
         'request_scoped' => [
-            'OzerOzay\OctaneTenancy\Tenancy',
+            'Stancl\Tenancy\Tenancy',
             'cache',
             'session',
         ],
         'persistent' => [
-            'OzerOzay\OctaneTenancy\Database\DatabaseManager',
+            'Stancl\Tenancy\Database\DatabaseManager',
             'events',
             'router',
         ],
@@ -422,9 +422,9 @@ class IntelligentCacheInvalidator
 // Optimize middleware order for performance
 protected $middleware = [
     \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-    \OzerOzay\OctaneTenancy\Middleware\EarlyTenantResolution::class, // Early resolution
+    \Stancl\Tenancy\Middleware\EarlyTenantResolution::class, // Early resolution
     \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-    \OzerOzay\OctaneTenancy\Middleware\TenantCacheMiddleware::class,  // Cache after resolution
+    \Stancl\Tenancy\Middleware\TenantCacheMiddleware::class,  // Cache after resolution
     \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     // ... other middleware
 ];

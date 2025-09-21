@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy;
+namespace Stancl\Tenancy;
 
 use Closure;
 use Illuminate\Cache\CacheManager;
@@ -11,12 +11,12 @@ use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use OzerOzay\OctaneTenancy\Bootstrappers\FilesystemTenancyBootstrapper;
-use OzerOzay\OctaneTenancy\Contracts\Domain;
-use OzerOzay\OctaneTenancy\Contracts\Tenant;
-use OzerOzay\OctaneTenancy\Listeners\ForgetTenantParameter;
-use OzerOzay\OctaneTenancy\Resolvers\DomainTenantResolver;
-use OzerOzay\OctaneTenancy\Octane\OctaneCompatibilityManager;
+use Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper;
+use Stancl\Tenancy\Contracts\Domain;
+use Stancl\Tenancy\Contracts\Tenant;
+use Stancl\Tenancy\Listeners\ForgetTenantParameter;
+use Stancl\Tenancy\Resolvers\DomainTenantResolver;
+use Stancl\Tenancy\Octane\OctaneCompatibilityManager;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -209,7 +209,11 @@ class TenancyServiceProvider extends ServiceProvider
             
             // Register the compatibility manager as a singleton
             $this->app->singleton(OctaneCompatibilityManager::class, function ($app) {
-                return new OctaneCompatibilityManager($app->make('Laravel\Octane\RequestContext'));
+                // Check if RequestContext is available, otherwise pass null
+                $context = $app->bound('Laravel\Octane\RequestContext') 
+                    ? $app->make('Laravel\Octane\RequestContext') 
+                    : null;
+                return new OctaneCompatibilityManager($context);
             });
         }
     }

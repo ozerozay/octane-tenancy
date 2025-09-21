@@ -34,13 +34,13 @@ php artisan octane:install --server=roadrunner
 
 ```bash
 # Publish tenancy config
-php artisan vendor:publish --provider="OzerOzay\OctaneTenancy\TenancyServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Stancl\Tenancy\TenancyServiceProvider" --tag="config"
 
 # Publish Octane-specific config
-php artisan vendor:publish --provider="OzerOzay\OctaneTenancy\TenancyServiceProvider" --tag="octane-config"
+php artisan vendor:publish --provider="Stancl\Tenancy\TenancyServiceProvider" --tag="octane-config"
 
 # Publish migrations
-php artisan vendor:publish --provider="OzerOzay\OctaneTenancy\TenancyServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Stancl\Tenancy\TenancyServiceProvider" --tag="migrations"
 ```
 
 ### 4. Run Migrations
@@ -118,13 +118,13 @@ Update your `config/app.php`:
 ```php
 'providers' => [
     // ... other providers
-    OzerOzay\OctaneTenancy\TenancyServiceProvider::class,
+    Stancl\Tenancy\TenancyServiceProvider::class,
 ],
 
 'aliases' => [
     // ... other aliases
-    'Tenancy' => OzerOzay\OctaneTenancy\Facades\Tenancy::class,
-    'GlobalCache' => OzerOzay\OctaneTenancy\Facades\GlobalCache::class,
+    'Tenancy' => Stancl\Tenancy\Facades\Tenancy::class,
+    'GlobalCache' => Stancl\Tenancy\Facades\GlobalCache::class,
 ],
 ```
 
@@ -186,7 +186,7 @@ composer octane-benchmark
 ### Basic Tenant Resolution
 
 ```php
-use OzerOzay\OctaneTenancy\Facades\Tenancy;
+use Stancl\Tenancy\Facades\Tenancy;
 
 // In your routes or controllers
 Route::middleware(['octane-tenant'])->group(function () {
@@ -200,7 +200,7 @@ Route::middleware(['octane-tenant'])->group(function () {
 ### Manual Tenant Switching
 
 ```php
-use OzerOzay\OctaneTenancy\Facades\Tenancy;
+use Stancl\Tenancy\Facades\Tenancy;
 
 // Switch tenants safely
 Tenancy::run($tenant, function () {
@@ -213,7 +213,7 @@ Tenancy::run($tenant, function () {
 ### Global Context Operations
 
 ```php
-use OzerOzay\OctaneTenancy\Facades\GlobalCache;
+use Stancl\Tenancy\Facades\GlobalCache;
 
 // Use central/global cache
 GlobalCache::put('global_setting', 'value');
@@ -285,7 +285,7 @@ php artisan config:clear
 OCTANE_TENANCY_MONITOR_STATICS=true
 
 # Or reset manually in code
-\OzerOzay\OctaneTenancy\Tenancy::resetStaticState();
+\Stancl\Tenancy\Tenancy::resetStaticState();
 ```
 
 ## 📈 Production Optimization

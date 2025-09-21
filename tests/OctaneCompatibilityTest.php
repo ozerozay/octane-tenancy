@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy\Tests;
+namespace Stancl\Tenancy\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Octane\Events\RequestTerminated;
-use OzerOzay\OctaneTenancy\Octane\OctaneCompatibilityManager;
-use OzerOzay\OctaneTenancy\Tests\Etc\Tenant;
-use OzerOzay\OctaneTenancy\Tenancy;
-use OzerOzay\OctaneTenancy\TenancyServiceProvider;
+use Stancl\Tenancy\Octane\OctaneCompatibilityManager;
+use Stancl\Tenancy\Tests\Etc\Tenant;
+use Stancl\Tenancy\Tenancy;
+use Stancl\Tenancy\TenancyServiceProvider;
 
 class OctaneCompatibilityTest extends TestCase
 {

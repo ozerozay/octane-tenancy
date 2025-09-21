@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy;
+namespace Stancl\Tenancy;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Traits\Macroable;
-use OzerOzay\OctaneTenancy\Concerns\DealsWithRouteContexts;
-use OzerOzay\OctaneTenancy\Concerns\ManagesRLSPolicies;
-use OzerOzay\OctaneTenancy\Contracts\TenancyBootstrapper;
-use OzerOzay\OctaneTenancy\Contracts\Tenant;
-use OzerOzay\OctaneTenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
+use Stancl\Tenancy\Concerns\DealsWithRouteContexts;
+use Stancl\Tenancy\Concerns\ManagesRLSPolicies;
+use Stancl\Tenancy\Contracts\TenancyBootstrapper;
+use Stancl\Tenancy\Contracts\Tenant;
+use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
 
 class Tenancy
 {

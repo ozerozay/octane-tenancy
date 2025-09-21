@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy\Octane;
+namespace Stancl\Tenancy\Octane;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use OzerOzay\OctaneTenancy\Contracts\Tenant;
-use OzerOzay\OctaneTenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Contracts\Tenant;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 
 /**
  * Octane-aware tenant initialization middleware

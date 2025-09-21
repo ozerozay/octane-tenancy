@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy\Octane;
+namespace Stancl\Tenancy\Octane;
 
 use Closure;
 use Laravel\Octane\RequestContext;
@@ -10,7 +10,7 @@ use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestTerminated;
 use Laravel\Octane\Events\TaskTerminated;
 use Laravel\Octane\Events\TickTerminated;
-use OzerOzay\OctaneTenancy\Contracts\Tenant;
+use Stancl\Tenancy\Contracts\Tenant;
 
 /**
  * Octane compatibility manager for memory leak prevention and proper cleanup
@@ -21,22 +21,22 @@ class OctaneCompatibilityManager implements OperationTerminated
      * Static properties that need cleanup between requests
      */
     protected static array $staticPropertiesToReset = [
-        'OzerOzay\OctaneTenancy\TenancyServiceProvider::$configure' => null,
-        'OzerOzay\OctaneTenancy\TenancyServiceProvider::$adjustCacheManagerUsing' => null,
-        'OzerOzay\OctaneTenancy\Middleware\InitializeTenancyBySubdomain::$subdomainIndex' => 0,
-        'OzerOzay\OctaneTenancy\Facades\GlobalCache::$cached' => false,
-        'OzerOzay\OctaneTenancy\Tenancy::$findWith' => [],
-        'OzerOzay\OctaneTenancy\Database\DatabaseConfig::$usernameGenerator' => null,
-        'OzerOzay\OctaneTenancy\Database\DatabaseConfig::$passwordGenerator' => null,
-        'OzerOzay\OctaneTenancy\Database\DatabaseConfig::$databaseNameGenerator' => null,
+        'Stancl\Tenancy\TenancyServiceProvider::$configure' => null,
+        'Stancl\Tenancy\TenancyServiceProvider::$adjustCacheManagerUsing' => null,
+        'Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain::$subdomainIndex' => 0,
+        'Stancl\Tenancy\Facades\GlobalCache::$cached' => false,
+        'Stancl\Tenancy\Tenancy::$findWith' => [],
+        'Stancl\Tenancy\Database\DatabaseConfig::$usernameGenerator' => null,
+        'Stancl\Tenancy\Database\DatabaseConfig::$passwordGenerator' => null,
+        'Stancl\Tenancy\Database\DatabaseConfig::$databaseNameGenerator' => null,
     ];
 
     /**
      * Singletons that need to be flushed between requests to prevent memory leaks
      */
     protected static array $singletonsToFlush = [
-        'OzerOzay\OctaneTenancy\Tenancy',
-        'OzerOzay\OctaneTenancy\Database\DatabaseManager',
+        'Stancl\Tenancy\Tenancy',
+        'Stancl\Tenancy\Database\DatabaseManager',
         'globalCache',
         'globalUrl',
     ];
@@ -45,11 +45,11 @@ class OctaneCompatibilityManager implements OperationTerminated
      * Event listeners that accumulate memory
      */
     protected static array $eventListenersToClean = [
-        'OzerOzay\OctaneTenancy\Events\*',
+        'Stancl\Tenancy\Events\*',
     ];
 
     public function __construct(
-        protected RequestContext $context
+        protected ?RequestContext $context = null
     ) {}
 
     /**
@@ -106,7 +106,7 @@ class OctaneCompatibilityManager implements OperationTerminated
         // Clear tenancy-specific event listeners
         $listeners = $events->getListeners();
         foreach ($listeners as $eventName => $eventListeners) {
-            if (str_contains($eventName, 'OzerOzay\\OctaneTenancy\\Events')) {
+            if (str_contains($eventName, 'Stancl\\Tenancy\\Events')) {
                 // Keep essential listeners, remove accumulated ones
                 $events->forget($eventName);
             }
@@ -118,8 +118,8 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function forceTenancyEnd(): void
     {
-        if (app()->bound('OzerOzay\OctaneTenancy\Tenancy')) {
-            $tenancy = app('OzerOzay\OctaneTenancy\Tenancy');
+        if (app()->bound('Stancl\Tenancy\Tenancy')) {
+            $tenancy = app('Stancl\Tenancy\Tenancy');
             if ($tenancy->initialized) {
                 $tenancy->end();
             }

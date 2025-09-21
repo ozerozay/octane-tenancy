@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OzerOzay\OctaneTenancy\Tests;
+namespace Stancl\Tenancy\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use OzerOzay\OctaneTenancy\Tests\Etc\Tenant;
-use OzerOzay\OctaneTenancy\Octane\OctaneCompatibilityManager;
+use Stancl\Tenancy\Tests\Etc\Tenant;
+use Stancl\Tenancy\Octane\OctaneCompatibilityManager;
 use Laravel\Octane\Events\RequestTerminated;
 
 class OctanePerformanceTest extends TestCase
@@ -221,8 +221,8 @@ class OctanePerformanceTest extends TestCase
     {
         config([
             'tenancy.bootstrappers' => [
-                \OzerOzay\OctaneTenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
-                \OzerOzay\OctaneTenancy\Bootstrappers\CacheTenancyBootstrapper::class,
+                \Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
+                \Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
             ],
         ]);
         
