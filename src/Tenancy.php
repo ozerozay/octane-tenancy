@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Stancl\Tenancy;
+namespace OzerOzay\OctaneTenancy;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Traits\Macroable;
-use Stancl\Tenancy\Concerns\DealsWithRouteContexts;
-use Stancl\Tenancy\Concerns\ManagesRLSPolicies;
-use Stancl\Tenancy\Contracts\TenancyBootstrapper;
-use Stancl\Tenancy\Contracts\Tenant;
-use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
+use OzerOzay\OctaneTenancy\Concerns\DealsWithRouteContexts;
+use OzerOzay\OctaneTenancy\Concerns\ManagesRLSPolicies;
+use OzerOzay\OctaneTenancy\Contracts\TenancyBootstrapper;
+use OzerOzay\OctaneTenancy\Contracts\Tenant;
+use OzerOzay\OctaneTenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
 
 class Tenancy
 {
@@ -32,8 +32,38 @@ class Tenancy
 
     /**
      * List of relations to eager load when fetching a tenant via tenancy()->find().
+     * Note: This is reset automatically in Octane environments to prevent memory leaks.
      */
     public static array $findWith = [];
+
+    /**
+     * Octane-aware static property getter
+     */
+    public static function getFindWith(): array
+    {
+        // In Octane environments, ensure we don't accumulate stale relations
+        if (isset($_SERVER['LARAVEL_OCTANE'])) {
+            return static::$findWith ?? [];
+        }
+        
+        return static::$findWith;
+    }
+
+    /**
+     * Octane-safe method to set find relations
+     */
+    public static function setFindWith(array $relations): void
+    {
+        static::$findWith = $relations;
+    }
+
+    /**
+     * Reset static state - called by Octane cleanup
+     */
+    public static function resetStaticState(): void
+    {
+        static::$findWith = [];
+    }
 
     /**
      * A list of bootstrappers that have been initialized.
@@ -178,7 +208,7 @@ class Tenancy
     public static function find(int|string $id, ?string $column = null, bool $withRelations = false): (Tenant&Model)|null
     {
         /** @var (Tenant&Model)|null $tenant */
-        $tenant = static::model()->with($withRelations ? static::$findWith : [])->firstWhere($column ?? static::model()->getTenantKeyName(), $id);
+        $tenant = static::model()->with($withRelations ? static::getFindWith() : [])->firstWhere($column ?? static::model()->getTenantKeyName(), $id);
 
         return $tenant;
     }

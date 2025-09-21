@@ -1,24 +1,38 @@
 {
-    "name": "stancl/tenancy",
-    "description": "Automatic multi-tenancy for your Laravel application.",
+    "name": "ozerozay/octane-tenancy",
+    "description": "Laravel Octane compatible multi-tenancy for your Laravel application with full FrankenPHP, Swoole & RoadRunner support.",
     "keywords": [
         "laravel",
+        "laravel-octane",
+        "octane",
+        "swoole",
+        "frankenphp",
+        "roadrunner",
         "multi-tenancy",
         "multitenancy",
         "multi-database",
-        "tenancy"
+        "tenancy",
+        "performance",
+        "high-performance"
     ],
     "license": "MIT",
     "authors": [
         {
             "name": "Samuel Štancl",
-            "email": "samuel@archte.ch"
+            "email": "samuel@archte.ch",
+            "role": "Original Author"
+        },
+        {
+            "name": "Özer Özay",
+            "email": "ozer@merkezim.tr",
+            "role": "Octane Implementation & Optimization"
         }
     ],
     "require": {
         "php": "^8.4",
         "ext-json": "*",
         "illuminate/support": "^12.0",
+        "laravel/octane": "^2.5",
         "laravel/tinker": "^2.0",
         "ramsey/uuid": "^4.7.3",
         "stancl/jobpipeline": "2.0.0-rc6",
@@ -37,7 +51,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Stancl\\Tenancy\\": "src/"
+            "OzerOzay\\OctaneTenancy\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -45,17 +59,17 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Stancl\\Tenancy\\Tests\\": "tests/"
+            "OzerOzay\\OctaneTenancy\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Stancl\\Tenancy\\TenancyServiceProvider"
+                "OzerOzay\\OctaneTenancy\\TenancyServiceProvider"
             ],
             "aliases": {
-                "Tenancy": "Stancl\\Tenancy\\Facades\\Tenancy",
-                "GlobalCache": "Stancl\\Tenancy\\Facades\\GlobalCache"
+                "Tenancy": "OzerOzay\\OctaneTenancy\\Facades\\Tenancy",
+                "GlobalCache": "OzerOzay\\OctaneTenancy\\Facades\\GlobalCache"
             }
         }
     },
@@ -94,7 +108,12 @@
         "act-input": [
             "Composer\\Config::disableProcessTimeout",
             "act -j tests --matrix 'laravel:^11.0' --input"
-        ]
+        ],
+        "octane-swoole": "php artisan octane:start --server=swoole",
+        "octane-frankenphp": "php artisan octane:start --server=frankenphp",
+        "octane-roadrunner": "php artisan octane:start --server=roadrunner",
+        "octane-test": "php artisan octane:reload && ./test --octane",
+        "octane-benchmark": "ab -n 1000 -c 10 http://localhost:8000/"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

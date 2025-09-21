@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stancl\Tenancy;
+namespace OzerOzay\OctaneTenancy;
 
 use Closure;
 use Illuminate\Cache\CacheManager;
@@ -11,11 +11,12 @@ use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper;
-use Stancl\Tenancy\Contracts\Domain;
-use Stancl\Tenancy\Contracts\Tenant;
-use Stancl\Tenancy\Listeners\ForgetTenantParameter;
-use Stancl\Tenancy\Resolvers\DomainTenantResolver;
+use OzerOzay\OctaneTenancy\Bootstrappers\FilesystemTenancyBootstrapper;
+use OzerOzay\OctaneTenancy\Contracts\Domain;
+use OzerOzay\OctaneTenancy\Contracts\Tenant;
+use OzerOzay\OctaneTenancy\Listeners\ForgetTenantParameter;
+use OzerOzay\OctaneTenancy\Resolvers\DomainTenantResolver;
+use OzerOzay\OctaneTenancy\Octane\OctaneCompatibilityManager;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -35,10 +36,15 @@ class TenancyServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(__DIR__ . '/../assets/config.php', 'tenancy');
 
+        // Register Octane compatibility manager
+        $this->registerOctaneCompatibility();
+
         $this->app->singleton(Database\DatabaseManager::class);
 
-        // Make sure Tenancy is stateful.
-        $this->app->singleton(Tenancy::class);
+        // Make sure Tenancy is stateful (Octane-aware).
+        $this->app->singleton(Tenancy::class, function ($app) {
+            return new Tenancy();
+        });
 
         // Make sure features are bootstrapped as soon as Tenancy is instantiated.
         $this->app->extend(Tenancy::class, function (Tenancy $tenancy) {
@@ -190,5 +196,29 @@ class TenancyServiceProvider extends ServiceProvider
             // always. We allow for this to be controlled using a static property.
             Event::listen(RouteMatched::class, ForgetTenantParameter::class);
         }
+    }
+
+    /**
+     * Register Octane compatibility features
+     */
+    protected function registerOctaneCompatibility(): void
+    {
+        // Only register Octane features if Octane is installed
+        if (class_exists('\Laravel\Octane\OctaneServiceProvider')) {
+            OctaneCompatibilityManager::registerOctaneHooks();
+            
+            // Register the compatibility manager as a singleton
+            $this->app->singleton(OctaneCompatibilityManager::class, function ($app) {
+                return new OctaneCompatibilityManager($app->make('Laravel\Octane\RequestContext'));
+            });
+        }
+    }
+
+    /**
+     * Check if we're running under Octane
+     */
+    protected function isRunningUnderOctane(): bool
+    {
+        return isset($_SERVER['LARAVEL_OCTANE']);
     }
 }

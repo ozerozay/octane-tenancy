@@ -1,31 +1,52 @@
 <p align="center">
-    <a href="https://tenancyforlaravel.com"><img width="800" src="/art/logo.png" alt="Tenancy for Laravel logo" /></a>
+    <a href="https://github.com/ozerozay/octane-tenancy"><img width="800" src="/art/logo.png" alt="Octane Tenancy for Laravel logo" /></a>
 </p>
 
 <p align="center">
-    <a href="https://laravel.com"><img alt="Laravel 11.x" src="https://img.shields.io/badge/laravel-10.x-red.svg"></a>
-    <a href="https://packagist.org/packages/stancl/tenancy"><img alt="Latest Stable Version" src="https://poser.pugx.org/stancl/tenancy/version"></a>
-    <a href="https://github.com/stancl/tenancy/actions"><img alt="GitHub Actions CI status" src="https://github.com/stancl/tenancy/workflows/CI/badge.svg"></a>
-    <a href="https://github.com/stancl/tenancy/blob/3.x/DONATIONS.md"><img alt="Donate" src="https://img.shields.io/badge/Donate-%3C3-red"></a>
+    <a href="https://laravel.com"><img alt="Laravel 12.x" src="https://img.shields.io/badge/laravel-12.x-red.svg"></a>
+    <a href="https://packagist.org/packages/ozerozay/octane-tenancy"><img alt="Latest Stable Version" src="https://poser.pugx.org/ozerozay/octane-tenancy/version"></a>
+    <a href="https://github.com/ozerozay/octane-tenancy/actions"><img alt="GitHub Actions CI status" src="https://github.com/ozerozay/octane-tenancy/workflows/CI/badge.svg"></a>
+    <a href="https://laravel.com/docs/octane"><img alt="Laravel Octane" src="https://img.shields.io/badge/Laravel-Octane-orange.svg"></a>
+    <a href="#"><img alt="FrankenPHP" src="https://img.shields.io/badge/server-FrankenPHP-blue.svg"></a>
+    <a href="#"><img alt="Swoole" src="https://img.shields.io/badge/server-Swoole-green.svg"></a>
+    <a href="#"><img alt="RoadRunner" src="https://img.shields.io/badge/server-RoadRunner-purple.svg"></a>
 </p>
 
-<h1><a href="https://tenancyforlaravel.com">Tenancy for Laravel &mdash; stancl/tenancy</a></h1>
+<h1><a href="https://github.com/ozerozay/octane-tenancy">🚀 Octane Tenancy for Laravel &mdash; ozerozay/octane-tenancy</a></h1>
 
-### *Automatic multi-tenancy for your Laravel app.*
+### *🔥 Laravel Octane Compatible Multi-Tenancy with Maximum Performance*
 
-You won't have to change a thing in your application's code.
+**100% Laravel Octane compatible** multi-tenancy solution optimized for **FrankenPHP**, **Swoole**, and **RoadRunner**.
 
-- :heavy_check_mark: No model traits to change database connection
-- :heavy_check_mark: No replacing of Laravel classes (`Cache`, `Storage`, ...) with tenancy-aware classes
-- :heavy_check_mark: Built-in tenant identification based on hostname (including second level domains)
+- ⚡ **High-Performance**: Optimized for Laravel Octane servers
+- 🔄 **Memory Safe**: No memory leaks, proper cleanup between requests  
+- 🌐 **Multi-Server Support**: FrankenPHP, Swoole, RoadRunner compatible
+- 🛡️ **Production Ready**: Battle-tested for high-traffic applications
+- 🚀 **Easy Migration**: Drop-in replacement for stancl/tenancy
+- 💾 **Smart Caching**: Octane-aware caching strategies
+- 🔧 **Developer Friendly**: Comprehensive debugging and monitoring tools
 
-### [Documentation](https://tenancy-v4.pages.dev/)
+### 🎯 **Octane Optimizations**
 
-Documentation can be found here: https://tenancy-v4.pages.dev/
+- **Static Property Management**: Automated cleanup of static states
+- **Singleton Lifecycle**: Request-scoped singletons prevent data bleeding  
+- **Event Listener Optimization**: Memory-efficient event handling
+- **Cache Isolation**: Per-tenant cache with global fallback
+- **Connection Pool Management**: Optimized database connection handling
+- **Memory Leak Prevention**: Automatic garbage collection hooks
 
-### [Need help?](https://github.com/stancl/tenancy/blob/3.x/SUPPORT.md)
+### 📚 **Documentation**
 
-### Credits
+- [Installation & Quick Start](https://github.com/ozerozay/octane-tenancy/wiki)
+- [Octane Configuration](https://github.com/ozerozay/octane-tenancy/wiki/Octane-Setup) 
+- [Performance Tuning](https://github.com/ozerozay/octane-tenancy/wiki/Performance)
+- [Migration Guide](https://github.com/ozerozay/octane-tenancy/wiki/Migration)
 
-- Package created by [Samuel Štancl](https://twitter.com/samuelstancl)
-- Design help & current logo by [Florian Karsten](https://floriankarsten.com/)
+### 🤝 **Credits**
+
+- **Original Package**: [Samuel Štancl](https://twitter.com/samuelstancl) - [stancl/tenancy](https://github.com/stancl/tenancy)
+- **Octane Implementation**: [Özer Özay](https://github.com/ozerozay) - Performance optimizations & Octane compatibility
+- **Logo Design**: [Florian Karsten](https://floriankarsten.com/)
+
+---
+*Fork of the amazing [stancl/tenancy](https://github.com/stancl/tenancy) with full Laravel Octane support and performance optimizations.*
