@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Stancl\Tenancy\Octane;
 
 use Closure;
+use Illuminate\Contracts\Foundation\Application;
 use Laravel\Octane\RequestContext;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestTerminated;
@@ -53,6 +54,22 @@ class OctaneCompatibilityManager implements OperationTerminated
     ) {}
 
     /**
+     * Required by OperationTerminated interface - Laravel application instance
+     */
+    public function app(): mixed
+    {
+        return \app();
+    }
+
+    /**
+     * Required by OperationTerminated interface - Sandbox instance (if applicable)
+     */
+    public function sandbox(): mixed
+    {
+        return null; // Not applicable for our use case
+    }
+
+    /**
      * Handle the request terminated event
      */
     public function handle(RequestTerminated|TaskTerminated|TickTerminated $event): void
@@ -86,7 +103,7 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function flushSingletons(): void
     {
-        $app = app();
+        $app = \app();
         
         foreach (static::$singletonsToFlush as $singleton) {
             if ($app->bound($singleton)) {
@@ -101,7 +118,7 @@ class OctaneCompatibilityManager implements OperationTerminated
     protected function cleanEventListeners(): void
     {
         // Force garbage collection of event listeners
-        $events = app('events');
+        $events = \app('events');
         
         // Clear tenancy-specific event listeners
         $listeners = $events->getListeners();
@@ -118,8 +135,8 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function forceTenancyEnd(): void
     {
-        if (app()->bound('Stancl\Tenancy\Tenancy')) {
-            $tenancy = app('Stancl\Tenancy\Tenancy');
+        if (\app()->bound('Stancl\Tenancy\Tenancy')) {
+            $tenancy = \app('Stancl\Tenancy\Tenancy');
             if ($tenancy->initialized) {
                 $tenancy->end();
             }
@@ -149,21 +166,21 @@ class OctaneCompatibilityManager implements OperationTerminated
     {
         // Swoole
         if (class_exists('\Laravel\Octane\Swoole\SwooleExtension')) {
-            app('events')->listen([
+            \app('events')->listen([
                 \Laravel\Octane\Events\RequestTerminated::class,
             ], static::class);
         }
 
         // FrankenPHP 
         if (class_exists('\Laravel\Octane\FrankenPHP\FrankenPhpExtension')) {
-            app('events')->listen([
+            \app('events')->listen([
                 \Laravel\Octane\Events\RequestTerminated::class,
             ], static::class);
         }
 
         // RoadRunner
         if (class_exists('\Laravel\Octane\RoadRunner\RoadRunnerExtension')) {
-            app('events')->listen([
+            \app('events')->listen([
                 \Laravel\Octane\Events\RequestTerminated::class,
                 \Laravel\Octane\Events\TaskTerminated::class,
                 \Laravel\Octane\Events\TickTerminated::class,
