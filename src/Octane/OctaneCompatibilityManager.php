@@ -27,9 +27,6 @@ class OctaneCompatibilityManager implements OperationTerminated
         'Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain::$subdomainIndex' => 0,
         'Stancl\Tenancy\Facades\GlobalCache::$cached' => false,
         'Stancl\Tenancy\Tenancy::$findWith' => [],
-        'Stancl\Tenancy\Database\DatabaseConfig::$usernameGenerator' => null,
-        'Stancl\Tenancy\Database\DatabaseConfig::$passwordGenerator' => null,
-        'Stancl\Tenancy\Database\DatabaseConfig::$databaseNameGenerator' => null,
     ];
 
     /**
@@ -87,6 +84,7 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function resetStaticProperties(): void
     {
+        // Reset regular properties
         foreach (static::$staticPropertiesToReset as $property => $defaultValue) {
             [$class, $propertyName] = explode('::', $property);
             
@@ -95,6 +93,69 @@ class OctaneCompatibilityManager implements OperationTerminated
                 $reflectionProperty = $reflection->getProperty(ltrim($propertyName, '$'));
                 $reflectionProperty->setAccessible(true);
                 $reflectionProperty->setValue(null, $defaultValue);
+            }
+        }
+
+        // Reset DatabaseConfig Closures safely
+        $this->resetDatabaseConfigClosures();
+    }
+
+    /**
+     * Reset DatabaseConfig static Closures to their default values
+     */
+    protected function resetDatabaseConfigClosures(): void
+    {
+        if (!class_exists('Stancl\Tenancy\Database\DatabaseConfig')) {
+            return;
+        }
+
+        try {
+            $reflection = new \ReflectionClass('Stancl\Tenancy\Database\DatabaseConfig');
+
+            // Reset username generator
+            if ($reflection->hasProperty('usernameGenerator')) {
+                $property = $reflection->getProperty('usernameGenerator');
+                $property->setAccessible(true);
+                $property->setValue(null, function () {
+                    return \Illuminate\Support\Str::random(16);
+                });
+            }
+
+            // Reset password generator
+            if ($reflection->hasProperty('passwordGenerator')) {
+                $property = $reflection->getProperty('passwordGenerator');
+                $property->setAccessible(true);
+                $property->setValue(null, function () {
+                    return \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(32));
+                });
+            }
+
+            // Reset database name generator
+            if ($reflection->hasProperty('databaseNameGenerator')) {
+                $property = $reflection->getProperty('databaseNameGenerator');
+                $property->setAccessible(true);
+                $property->setValue(null, function ($tenant, $self) {
+                    $prefix = config('tenancy.database.prefix', '');
+                    $suffix = config('tenancy.database.suffix', '');
+
+                    if (!$suffix && method_exists($self, 'getTemplateConnection')) {
+                        $templateConnection = $self->getTemplateConnection();
+                        if (($templateConnection['driver'] ?? '') === 'sqlite') {
+                            $suffix = '.sqlite';
+                        }
+                    }
+
+                    return $prefix . $tenant->getTenantKey() . $suffix;
+                });
+            }
+
+        } catch (\Throwable $e) {
+            // Log the error but don't break the cleanup process
+            if (config('octane.debug.log_cleanup', false)) {
+                \Log::warning('Failed to reset DatabaseConfig closures', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
             }
         }
     }
