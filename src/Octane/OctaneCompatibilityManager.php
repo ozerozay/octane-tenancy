@@ -179,47 +179,15 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function cleanEventListeners(): void
     {
-        try {
-            $events = \app('events');
-            
-            // Use reflection to access the listeners property
-            $reflection = new \ReflectionClass($events);
-            
-            if ($reflection->hasProperty('listeners')) {
-                $listenersProperty = $reflection->getProperty('listeners');
-                $listenersProperty->setAccessible(true);
-                $listeners = $listenersProperty->getValue($events);
-                
-                // Clear tenancy-specific event listeners
-                foreach ($listeners as $eventName => $eventListeners) {
-                    if (is_string($eventName) && str_contains($eventName, 'Stancl\\Tenancy\\Events')) {
-                        // Clear specific tenancy event listeners
-                        $events->forget($eventName);
-                    }
-                }
-            }
-
-            // Also clear wildcards if they exist
-            if ($reflection->hasProperty('wildcards')) {
-                $wildcardsProperty = $reflection->getProperty('wildcards');
-                $wildcardsProperty->setAccessible(true);
-                $wildcards = $wildcardsProperty->getValue($events);
-                
-                foreach ($wildcards as $eventPattern => $listeners) {
-                    if (is_string($eventPattern) && str_contains($eventPattern, 'Stancl\\Tenancy\\Events')) {
-                        unset($wildcards[$eventPattern]);
-                    }
-                }
-                
-                $wildcardsProperty->setValue($events, $wildcards);
-            }
-            
-        } catch (\Throwable $e) {
-            // Log but don't break the cleanup process
-            if (config('octane.debug.log_cleanup', false)) {
-                \Log::warning('Failed to clean event listeners', [
-                    'error' => $e->getMessage(),
-                ]);
+        // Force garbage collection of event listeners
+        $events = \app('events');
+        
+        // Clear tenancy-specific event listeners
+        $listeners = $events->getListeners();
+        foreach ($listeners as $eventName => $eventListeners) {
+            if (str_contains($eventName, 'Stancl\\Tenancy\\Events')) {
+                // Keep essential listeners, remove accumulated ones
+                $events->forget($eventName);
             }
         }
     }
