@@ -34,8 +34,7 @@ class OctaneCompatibilityManager implements OperationTerminated
      * Singletons that need to be flushed between requests to prevent memory leaks
      */
     protected static array $singletonsToFlush = [
-        'Stancl\Tenancy\Tenancy',
-        'Stancl\Tenancy\Database\DatabaseManager',
+        // Sadece cache ve URL singletonları - database bağlantılarına dokunma!
         'globalCache',
         'globalUrl',
     ];
@@ -72,10 +71,11 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     public function handle(RequestTerminated|TaskTerminated|TickTerminated $event): void
     {
+        // Database bağlantılarını korumak için cleanup sırasını değiştirdik
+        $this->forceTenancyEnd();  // Önce tenancy'yi end et
         $this->resetStaticProperties();
         $this->flushSingletons();
         $this->cleanEventListeners();
-        $this->forceTenancyEnd();
         $this->cleanGlobalState();
         $this->monitorOpcachePerformance();
     }
@@ -229,6 +229,7 @@ class OctaneCompatibilityManager implements OperationTerminated
         if (\app()->bound('Stancl\Tenancy\Tenancy')) {
             $tenancy = \app('Stancl\Tenancy\Tenancy');
             if ($tenancy->initialized) {
+                // Sadece tenancy'yi end et, database manager'ı bozma
                 $tenancy->end();
             }
         }

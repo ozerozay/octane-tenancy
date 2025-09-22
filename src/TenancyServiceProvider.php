@@ -36,8 +36,10 @@ class TenancyServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(__DIR__ . '/../assets/config.php', 'tenancy');
         
-        // Merge Octane-specific config
-        $this->mergeConfigFrom(__DIR__ . '/../config/tenancy-octane.php', 'tenancy-octane');
+        // Octane-specific config'i ayrı namespace'de tut (database config'ini bozmasın)
+        if (file_exists(__DIR__ . '/../config/tenancy-octane.php')) {
+            $this->mergeConfigFrom(__DIR__ . '/../config/tenancy-octane.php', 'tenancy-octane');
+        }
 
         // Register Octane compatibility manager
         $this->registerOctaneCompatibility();
