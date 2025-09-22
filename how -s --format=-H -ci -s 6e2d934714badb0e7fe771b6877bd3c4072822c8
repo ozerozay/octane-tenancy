@@ -1,0 +1,100 @@
+[33m2a424f2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m TenancyServiceProvider sınıfında Octane'a özgü yapılandırma dosyasının yüklenmesi için dosya varlığı kontrolü eklendi. OctaneCompatibilityManager sınıfında ise database bağlantılarını korumak amacıyla cleanup sırası değiştirildi ve yalnızca tenancy'nin sonlandırılması sağlandı. Bu değişiklikler, kodun daha güvenilir ve yönetilebilir olmasını hedefliyor.
+[33m6e2d934[m Octane yapılandırma dosyası silindi ve TenancyServiceProvider sınıfında Octane'a özgü yapılandırma dosyası eklendi. Ayrıca, OctaneAwareTenantMiddleware ve OctaneCompatibilityManager sınıflarında yapılandırma ayarları güncellenerek, Octane ile entegrasyon güçlendirildi. Bu değişiklikler, kodun daha düzenli ve yönetilebilir olmasını sağlamak amacıyla yapıldı.
+[33mf0e21ba[m OctaneCompatibilityManager sınıfındaki cleanEventListeners() yöntemi, olay dinleyicilerini temizlemek için yansıtma (reflection) kullanımını kaldırarak daha basit ve doğrudan bir yöntemle güncellendi. Kiracıya özgü olay dinleyicileri artık daha etkili bir şekilde temizleniyor. Bu değişiklik, kodun okunabilirliğini ve bakımını artırmak amacıyla yapıldı.
+[33m8403f87[m OctaneCompatibilityManager sınıfındaki cleanEventListeners() yöntemi, olay dinleyicilerini temizlemek için yansıtma (reflection) kullanarak daha güvenilir bir yöntemle güncellendi. Ayrıca, kiracıya özgü olay dinleyicilerini ve wildcard'ları temizlerken oluşabilecek hatalar için loglama mekanizması eklendi. Bu değişiklik, kodun bakımını ve hata ayıklamasını kolaylaştırmak amacıyla yapıldı.
+[33mfe5455c[m OctaneCompatibilityManager sınıfında DatabaseConfig için statik Closure'ların varsayılan değerlere sıfırlanmasını sağlayan yeni bir yöntem eklendi. Ayrıca, sıfırlama işlemi sırasında oluşabilecek hatalar için loglama mekanizması eklendi. Bu değişiklik, kodun daha güvenilir ve bakımı kolay olmasını sağlamak amacıyla yapıldı.
+[33mc503474[m Octane yapılandırmasına OPcache entegrasyonu eklendi. OPcache sıfırlama, izleme ve kiracı dosyalarını geçersiz kılma gibi yeni ayarlar tanımlandı. Ayrıca, OPcache durumu kontrolü ve performans izleme işlevleri eklendi. Dokümantasyona OPcache ile ilgili bilgiler ve komutlar eklendi.
+[33m5996f50[m composer.json dosyasında PHP sürümü 8.4'ten 8.1'e güncellendi. Bu değişiklik, projenin daha eski PHP sürümleriyle uyumlu olmasını sağlamak amacıyla yapıldı.
+[33m49153f7[m OctaneCompatibilityManager sınıfındaki sandbox() yönteminin dönüş tipi, Application olarak güncellendi. Ayrıca, sandbox() yöntemi artık uygulama örneğini döndürerek sandbox kullanımını kaldırdı. Bu değişiklik, kodun daha net ve uyumlu olmasını sağlamak amacıyla yapıldı.
+[33m1431f4b[m OctaneCompatibilityManager sınıfındaki app() yönteminin dönüş tipi, Laravel uygulama örneği olarak güncellendi. Ayrıca, Illuminate\Contracts\Foundation\Application yerine Illuminate\Foundation\Application kullanıldı. Bu değişiklikler, kodun daha net ve uyumlu olmasını sağlamak amacıyla yapıldı.
+[33m60e1b17[m OctaneCompatibilityManager sınıfına OperationTerminated arayüzü için gerekli olan app() ve sandbox() yöntemleri eklendi. Ayrıca, app() çağrıları \app() olarak güncellendi. Bu değişiklikler, Laravel Octane ile uyumluluğu artırmak amacıyla yapıldı.
+[33m924c033[m composer.json, README.md ve dokümantasyon dosyalarında yapılan güncellemelerle birlikte, proje adı ve açıklaması "ozerozay/octane-tenancy" olarak değiştirildi. Namespace değişiklikleri yapılarak "Stancl\Tenancy" olarak güncellendi. Ayrıca, Octane uyumluluğu ve performans iyileştirmeleri sağlandı. Mevcut projelerin bu pakete geçişi kolaylaştırıldı.
+[33m1b68216[m composer.json ve README.md dosyalarında isim ve açıklama güncellemeleri yapıldı. Proje, "ozerozay/octane-tenancy" olarak yeniden adlandırıldı ve Laravel Octane ile uyumlu çoklu kiracılık desteği eklendi. Ayrıca, Octane ile ilgili performans iyileştirmeleri ve yeni özellikler tanıtıldı. Tenancy sınıfı ve servis sağlayıcısında Octane uyumluluğu sağlandı.
+[33m99d854e[m[33m ([m[1;31mupstream/master[m[33m, [m[1;31mupstream/HEAD[m[33m)[m [4.x] Fix ViteBundler not affecting Vite static calls (#1389)
+[33m3b42c9e[m [4.x] Use --database in tenants:migrate as the template connection (#1386)
+[33md9f3525[m Add --force option to tenants:migrate-fresh (#1391)
+[33m413da36[m Simplify validate workflow (use regex)
+[33mecc3374[m [4.x] Support `database` cache store tenancy (#1290) (resolve #852)
+[33m3984d64[m Use globalCache in CachedTenantResolver (fix #1340)
+[33m8f8af34[m [4.x] Only revert initialized bootstrappers (#1385)
+[33mf308e2f[m [4.x] Resolve testing todos (#1361)
+[33m81fff15[m [4.x] Update ForgetTenantParameter-related comments (#1375)
+[33m16ed2bc[m Merge branch 'master' of github.com:archtechx/tenancy
+[33m0a48767[m Bump jobpipeline dependency to rc6
+[33m475ea10[m Delete unused import (#1382)
+[33mb2f2669[m [4.x] Cloning: addTenantParameter(bool), domain(string|null) (#1374)
+[33m0ef0104[m Add MariaDB database manager config
+[33m6262427[m phpstan fix
+[33m91295f0[m fix origin identification: parse hostname when full URL is used
+[33md8af9b4[m remove JobBatchBootstrapper
+[33m393f263[m[33m ([m[1;31mupstream/may25[m[33m)[m [4.x] Update route cloning example in TenancyServiceProvider stub (#1372)
+[33m4ead17a[m [4.x] TableRLSManager refactor, comment constraints (#1354)
+[33md1f12f5[m Instead of assigning $innerMiddleware during group MW unpacking, merge it (#1371)
+[33m1e926a1[m [4.x] Route cloning refactor (#1353)
+[33m7e1fe07[m [4.x] Test that global scopes on syncable models can break resource syncing, and that $scopeGetModelQuery can be used as a workaround for that  (#1285)
+[33m7481229[m revert regression in last commit, opt for a phpstan ignore instead
+[33m12fcbab[m phpstan fix
+[33m551895d[m Merge branch 'master' into may25
+[33me1fc0e1[m remove ignition dependencies
+[33m2057e1e[m [4.x] Make forcing RLS configurable (#1293)
+[33me74e1f9[m Make RouteMode enum backed (#1362)
+[33mf771aa8[m [4.x] Test that route model binding works correctly with path identification (#1360)
+[33m5f7fd38[m [4.x] URL generation, request data identification improvements (#1357)
+[33mf4cc99b[m fix phpstan
+[33m37f6260[m Add CLAUDE.md
+[33m588d1fc[m [4.x] Make TableRLSManager skip foreign keys with 'no-rls' comment right away (#1352)
+[33m27685ff[m improve sample RootUrlBootstrapper config
+[33mdc90e60[m [4.x] Make ScopeSessions usable on universal routes (#1342)
+[33m8cd15db[m [4.x] Make RemoveStorageSymlinksAction able to delete broken symlinks (#1323)
+[33m8d87ee9[m [4.x] Add ULIDGenerator (#1332)
+[33m84a2863[m [4.x] Fix fully qualified name at TenancyServiceProvider.stub.php (#1334)
+[33m95dd906[m [4.x] Make the ImpersonationToken model configurable (#1335)
+[33m37a0f1a[m [4.x] Invalidate resolver cache on delete (#1329)
+[33m8960a83[m [4.x] Laravel 12 support (#1321)
+[33m657e165[m[33m ([m[1;31mupstream/laravel-11-bc[m[33m)[m [4.x] Cleanup (#1317)
+[33meac88dc[m contributing note about mssql on Apple Silicon
+[33mffad2db[m fix regression in previous commit: consume PendingDispatch *before* reverting context
+[33mb9cc63f[m handle exceptions in Tenancy:run()
+[33m7bc2bb6[m Revert "Add laravel/framework:dev-master to CI matrix"
+[33m29bfe53[m Add laravel/framework:dev-master to CI matrix
+[33mcecf07a[m [4.x] Add tenant parameter to `defaults()` in `UrlGeneratorBootstrapper` (#1311)
+[33mfffaf7c[m Test ecnrypted casts (#1284)
+[33m30ee4e9[m [4.x] Fix 1267: early return in runForMultiple if an empty array is passed (#1286)
+[33m25360f6[m [4.x] Improve id generators (#1300)
+[33m7ce7629[m use mysql:8 in docker
+[33m8f2cb89[m phpstan fixes for spatie invader
+[33mc239239[m fix #1297 - require spatie/invade:*
+[33m8b131ed[m Allow overriding root URL in tests by default (#1296)
+[33m5d3b3d3[m [4.x] Improve RootUrl and UrlGenerator bootstrappers (#1294)
+[33m8f958d5[m [4.x] Queue logic refactor (#1289)
+[33m0e223e0[m [4.x] Fix `tenants:run` argument parsing (#1287)
+[33mf955b38[m phpstan fixes
+[33m3c183e4[m fix #1277: consume PendingDispatch return values in Tenancy::run()
+[33m99357d9[m ci: make phpcsfixer job use GH bot account
+[33ma88a42f[m [4.x] Add DisallowSqliteAttach feature (#1283)
+[33m6b38a35[m fix: drop tenant databases on migrate fresh without domains (#1282)
+[33mabe1f1f[m queue ci: set TENANCY_VERSION for setup.sh
+[33mf84b22e[m add queue CI workflow
+[33m79f740d[m [4.x] General code cleanup (#1278)
+[33m05b602e[m fix: no primary key on RLS views (#1280)
+[33meff4155[m deprecate JobBatchBootstrapper
+[33m5777ff8[m bump php version
+[33m855ba91[m prepare for public beta
+[33m7944472[m phpstan fix
+[33mcb0d7e2[m Improve early identification tests (#66)
+[33m48b916e[m Supported named in-memory SQLite databases (#69)
+[33m85bdbd5[m Fix pullFromPendingPool() behavior (#70)
+[33m19631f4[m Fix code style (php-cs-fixer)
+[33m56dd411[m Fix origin id w/ empty header & using full-hostname subdomain records This makes it possible to have Domain records in both `foo` and `foo.{centralDomain}` format when using the combined domain/subdomain identification middleware, or the origin header id mw which extends it.
+[33mc199a6e[m Merge branch 'master' of github.com:tenancy-for-laravel/v4
+[33m10b214c[m add phpstan ignore
+[33m5f8a3d2[m Improve the tests where the removed universal_channel() was still used (#64)
+[33ma07ba8c[m docker: add composer back
+[33md4b9972[m Fix code style (php-cs-fixer)
+[33m9ee1d63[m sqlite: use WAL journal mode by default
+[33m43d821c[m docker: base Dockerfile on php images, misc improvements
+[33ma52efe5[m wip broadcasting test fixes
+[33ma37dc9b[m reimplement broadcasting channel helpers to support model binding
+[33m836a258[m sqlite: use .sqlite suffix if db.suffix is empty
+[33mc6ba62b[m ParallelCommand: add -P option for bypassing MAX_PROCESSES
+[33m303b52d[m minor improvements to parallelization logic

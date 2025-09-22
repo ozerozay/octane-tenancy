@@ -71,13 +71,9 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     public function handle(RequestTerminated|TaskTerminated|TickTerminated $event): void
     {
-        // Database bağlantılarını korumak için cleanup sırasını değiştirdik
-        $this->forceTenancyEnd();  // Önce tenancy'yi end et
+        // Minimal Octane entegrasyonu: sadece tenancy bağlamını kapat ve hafif temizlik yap
+        $this->forceTenancyEnd();
         $this->resetStaticProperties();
-        $this->flushSingletons();
-        $this->cleanEventListeners();
-        $this->cleanGlobalState();
-        $this->monitorOpcachePerformance();
     }
 
     /**
