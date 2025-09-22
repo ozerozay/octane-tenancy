@@ -1,0 +1,77 @@
+# =============================================================================
+# 🚀 OCTANE TENANCY - SIMPLE CONFIGURATION
+# =============================================================================
+# Bu değerleri .env dosyanıza kopyalayın
+# Çoğu ayar otomatik optimize, sadece bunları ayarlayın!
+
+# -----------------------------------------------------------------------------
+# ⚡ TEMEL AYARLAR (Zorunlu)
+# -----------------------------------------------------------------------------
+
+# Octane Server (frankenphp öneriliyor)
+OCTANE_SERVER=frankenphp
+OCTANE_TENANCY_ENABLED=true
+
+# Cache Driver (Redis çok önemli!)
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+
+# -----------------------------------------------------------------------------
+# 🖥️ SERVER AYARLARI (Opsiyonel)
+# -----------------------------------------------------------------------------
+
+# FrankenPHP (Önerilen - En hızlı)
+FRANKENPHP_NUM_THREADS=8
+
+# Swoole (Alternatif)
+# SWOOLE_WORKER_NUM=8
+# SWOOLE_TASK_WORKERS=4
+
+# RoadRunner (Alternatif)  
+# RR_NUM_WORKERS=8
+
+# -----------------------------------------------------------------------------
+# 🐛 DEBUG (Sadece Development!)
+# -----------------------------------------------------------------------------
+
+# Production'da mutlaka false!
+APP_DEBUG=false
+
+# Development'da memory tracking için
+# APP_DEBUG=true
+
+# =============================================================================
+# 🎯 HIZLI BAŞLANGIČ
+# =============================================================================
+# 
+# 1. Bu ayarları .env'ye kopyalayın
+# 2. php artisan octane:start --server=frankenphp
+# 3. Sistem otomatik optimize çalışacak!
+# 
+# ⚠️ Redis kurulumu önemli:
+# sudo apt install redis-server  (Linux)
+# brew install redis             (Mac)
+# 
+# 🚀 Başlatma komutları:
+# php artisan octane:start --server=frankenphp --workers=8
+# php artisan octane:start --server=swoole --workers=8  
+# php artisan octane:start --server=roadrunner --workers=8
+#
+# =============================================================================
+# 📊 PERFORMANS İPUÇLARI
+# =============================================================================
+#
+# 🔥 YÜKSEK TRAFİK İÇİN:
+# FRANKENPHP_NUM_THREADS=16
+# CACHE_DRIVER=redis
+# SESSION_DRIVER=redis
+# APP_DEBUG=false
+#
+# 💾 DÜŞÜK BELLEK İÇİN:
+# FRANKENPHP_NUM_THREADS=4
+# 
+# 🐛 DEVELOPMENT İÇİN:
+# APP_DEBUG=true
+# CACHE_DRIVER=array
+#
+# =============================================================================

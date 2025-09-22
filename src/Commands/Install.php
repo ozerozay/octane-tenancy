@@ -23,6 +23,12 @@ class Install extends Command
         );
 
         $this->step(
+            name: 'Publishing Octane config file',
+            tag: 'octane-config',
+            file: 'config/tenancy-octane.php',
+        );
+
+        $this->step(
             name: 'Publishing routes',
             tag: 'routes',
             file: 'routes/tenant.php',

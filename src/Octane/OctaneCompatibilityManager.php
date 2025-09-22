@@ -6,6 +6,7 @@ namespace Stancl\Tenancy\Octane;
 
 use Closure;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Laravel\Octane\RequestContext;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestTerminated;
@@ -151,8 +152,8 @@ class OctaneCompatibilityManager implements OperationTerminated
 
         } catch (\Throwable $e) {
             // Log the error but don't break the cleanup process
-            if (config('octane.debug.log_cleanup', false)) {
-                \Log::warning('Failed to reset DatabaseConfig closures', [
+            if (config('tenancy-octane.debug.log_cleanup_operations', false)) {
+                Log::warning('Failed to reset DatabaseConfig closures', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -182,12 +183,40 @@ class OctaneCompatibilityManager implements OperationTerminated
         // Force garbage collection of event listeners
         $events = \app('events');
         
-        // Clear tenancy-specific event listeners
-        $listeners = $events->getListeners();
-        foreach ($listeners as $eventName => $eventListeners) {
-            if (str_contains($eventName, 'Stancl\\Tenancy\\Events')) {
-                // Keep essential listeners, remove accumulated ones
-                $events->forget($eventName);
+        // Clear tenancy-specific event listeners using reflection
+        try {
+            $reflection = new \ReflectionClass($events);
+            $listenersProperty = $reflection->getProperty('listeners');
+            $listenersProperty->setAccessible(true);
+            $listeners = $listenersProperty->getValue($events);
+            
+            if (is_array($listeners)) {
+                foreach ($listeners as $eventName => $eventListeners) {
+                    if (str_contains($eventName, 'Stancl\\Tenancy\\Events')) {
+                        // Keep essential listeners, remove accumulated ones
+                        $events->forget($eventName);
+                    }
+                }
+            }
+        } catch (\ReflectionException $e) {
+            // Fallback: Clear specific known tenancy events
+            $tenancyEvents = [
+                'Stancl\\Tenancy\\Events\\TenancyInitialized',
+                'Stancl\\Tenancy\\Events\\TenancyEnded',
+                'Stancl\\Tenancy\\Events\\BootstrappingTenancy',
+                'Stancl\\Tenancy\\Events\\TenantCreated',
+                'Stancl\\Tenancy\\Events\\TenantUpdated',
+                'Stancl\\Tenancy\\Events\\TenantDeleted',
+            ];
+            
+            foreach ($tenancyEvents as $event) {
+                $events->forget($event);
+            }
+            
+            if (config('tenancy-octane.debug.log_cleanup_operations', false)) {
+                Log::warning('Failed to use reflection for event cleanup, used fallback method', [
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
     }
@@ -229,14 +258,14 @@ class OctaneCompatibilityManager implements OperationTerminated
         }
 
         // Only reset OPcache in development or when explicitly enabled
-        $shouldReset = config('octane.memory_management.opcache_reset', false) 
+        $shouldReset = config('tenancy-octane.memory_management.opcache.reset', false) 
             || $this->isDevelopmentEnvironment();
 
         if ($shouldReset && function_exists('opcache_reset')) {
             opcache_reset();
             
-            if (config('octane.debug.log_cleanup', false)) {
-                \Log::debug('OPcache reset performed', [
+            if (config('tenancy-octane.debug.log_cleanup_operations', false)) {
+                Log::debug('OPcache reset performed', [
                     'memory_before' => memory_get_usage(true),
                     'opcache_stats' => $this->getOpcacheStats(),
                 ]);
@@ -380,16 +409,16 @@ class OctaneCompatibilityManager implements OperationTerminated
      */
     protected function monitorOpcachePerformance(): void
     {
-        if (!config('octane.debug.monitor_opcache', false) || !$this->isOpcacheEnabled()) {
+        if (!config('tenancy-octane.debug.enabled', false) || !$this->isOpcacheEnabled()) {
             return;
         }
 
         $stats = $this->getOpcacheStats();
-        $hitRateThreshold = config('octane.debug.opcache_hit_rate_threshold', 95.0);
+        $hitRateThreshold = config('tenancy-octane.memory_management.opcache.hit_rate_threshold', 95.0);
 
         // Check hit rate
         if ($stats['hit_rate'] < $hitRateThreshold) {
-            \Log::warning('OPcache hit rate below threshold', [
+            Log::warning('OPcache hit rate below threshold', [
                 'hit_rate' => $stats['hit_rate'],
                 'threshold' => $hitRateThreshold,
                 'stats' => $stats,
@@ -401,7 +430,7 @@ class OctaneCompatibilityManager implements OperationTerminated
             $wastedPercentage = $stats['memory_usage']['current_wasted_percentage'];
             
             if ($wastedPercentage > 10) { // More than 10% wasted
-                \Log::warning('OPcache memory waste detected', [
+                Log::warning('OPcache memory waste detected', [
                     'wasted_percentage' => $wastedPercentage,
                     'memory_usage' => $stats['memory_usage'],
                 ]);

@@ -35,6 +35,9 @@ class TenancyServiceProvider extends ServiceProvider
         }
 
         $this->mergeConfigFrom(__DIR__ . '/../assets/config.php', 'tenancy');
+        
+        // Merge Octane-specific config
+        $this->mergeConfigFrom(__DIR__ . '/../config/tenancy-octane.php', 'tenancy-octane');
 
         // Register Octane compatibility manager
         $this->registerOctaneCompatibility();
@@ -148,6 +151,10 @@ class TenancyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../assets/config.php' => config_path('tenancy.php'),
         ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/../config/tenancy-octane.php' => config_path('tenancy-octane.php'),
+        ], 'octane-config');
 
         $this->publishes([
             __DIR__ . '/../assets/migrations/' => database_path('migrations'),

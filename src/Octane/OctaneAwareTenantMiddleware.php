@@ -7,6 +7,7 @@ namespace Stancl\Tenancy\Octane;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Contracts\Tenant;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 
@@ -53,7 +54,7 @@ class OctaneAwareTenantMiddleware extends InitializeTenancyByDomain
      */
     protected function resolveTenantWithCaching(Request $request): ?Tenant
     {
-        $cacheEnabled = config('octane.performance.cache_tenant_resolution', true);
+        $cacheEnabled = config('tenancy-octane.performance.cache_tenant_resolution', true);
         
         if (!$cacheEnabled) {
             return $this->resolveFromRequest($request);
@@ -80,8 +81,8 @@ class OctaneAwareTenantMiddleware extends InitializeTenancyByDomain
         app('tenancy')->initialize($tenant);
 
         // Log memory usage in debug mode
-        if (config('octane.debug.log_memory_usage', false)) {
-            \Log::debug('Tenancy initialized', [
+        if (config('tenancy-octane.debug.enabled', false)) {
+            Log::debug('Tenancy initialized', [
                 'tenant_id' => $tenant->getTenantKey(),
                 'memory_usage' => memory_get_usage(true),
                 'memory_peak' => memory_get_peak_usage(true),
@@ -99,7 +100,7 @@ class OctaneAwareTenantMiddleware extends InitializeTenancyByDomain
         }
 
         // Force garbage collection if enabled
-        if (config('octane.memory_management.force_gc', true)) {
+        if (config('tenancy-octane.memory_management.force_gc', true)) {
             gc_collect_cycles();
         }
     }
@@ -117,16 +118,17 @@ class OctaneAwareTenantMiddleware extends InitializeTenancyByDomain
      */
     protected function isOctaneCleanupEnabled(): bool
     {
-        return config('octane.memory_management.auto_cleanup', true) 
+        return config('tenancy-octane.memory_management.auto_cleanup', true) 
             && isset($_SERVER['LARAVEL_OCTANE']);
     }
 
     /**
-     * Resolve tenant from request (override parent method if needed)
+     * Resolve tenant from request using parent's resolver
      */
     protected function resolveFromRequest(Request $request): ?Tenant
     {
-        // Use parent resolution logic
-        return parent::resolveFromRequest($request) ?? null;
+        // Use parent's resolver to get domain and then resolve tenant
+        $domain = $this->getDomain($request);
+        return $domain ? $this->resolver->resolve($domain) : null;
     }
 }
